@@ -60,7 +60,6 @@ const PreviousAuctions = () => {
                 </div>
               );
             })}
-            {console.log(auctions[current])}
           </div>
           <div>
             {auctions[current].auction[clicked].batsmen
@@ -92,7 +91,6 @@ const PreviousAuctions = () => {
                   return <PlayerCard key={w.image} {...w} />;
                 })
               : ""}
-            {console.log(auctions[1].auction[0])}
           </div>
         </div>
       ) : (
