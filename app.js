@@ -8,7 +8,6 @@ const http = require("http");
 const userRouter = require("./routes/user.route");
 const newsRouter = require("./routes/news.route");
 const auctionRouter = require("./routes/auction.route");
-// const User = require("./database/models/user.model");
 const path = require("path");
 require("dotenv").config();
 require("./database/connection");
@@ -16,18 +15,25 @@ require("./database/connection");
 const app = express();
 const server = http.createServer(app);
 
+// CORS origins
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://brigadiers.tech"
+];
+
+// Socket.IO configuration
 const io = socketio(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: allowedOrigins, // Allow requests from both origins
     credentials: true,
   },
 });
 
-//Middleware
+// Middleware
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: allowedOrigins, // Allow requests from both origins
     credentials: true,
   })
 );
@@ -36,7 +42,7 @@ app.use(helmet({ contentSecurityPolicy: false }));
 app.use(morgan("dev"));
 app.use(express.json());
 
-//Routes
+// Routes
 app.use(userRouter);
 app.use(newsRouter);
 app.use(auctionRouter);
@@ -51,6 +57,5 @@ if (process.env.NODE_ENV === "production") {
 require("./routes/socket.route")(io);
 
 server.listen(process.env.PORT || 8000, () => {
-  //User.collection.deleteMany({});
   console.log("Listening on port 8000");
 });
