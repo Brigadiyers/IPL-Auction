@@ -2,7 +2,7 @@ const axios = require("axios");
 
 const url =
   process.env.NODE_ENV === "production"
-    ? "https://brigadiers.tech/"
+    ? "https://brigadiers.tech/api/"
     : "http://localhost:8000/";
 
 const axiosInstance = axios.create({

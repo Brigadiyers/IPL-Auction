@@ -13,7 +13,7 @@ import io from "socket.io-client";
 
 const url =
   process.env.NODE_ENV === "production"
-    ? "https://brigadiers.tech/"
+    ? "https://brigadiers.tech/api/"
     : "http://localhost:8000/";
 
 const Auction = (props) => {
