@@ -13,16 +13,12 @@ server {
     ssl_certificate /etc/letsencrypt/live/brigadiers.tech/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/brigadiers.tech/privkey.pem;
 
-    root /path/to/your/html;  # Change this to the directory containing your index.html
+    root /var/www/html/build; # Change this to the directory containing your index.html
     index index.html;          # Specify the index file
 
-    # Serve index.html for unmatched requests
-    location / {
-        try_files $uri $uri/ /index.html;  # Serve index.html for all unmatched requests
-    }
-
-    # Proxy requests to your application
-    location /app {  # Change this to the appropriate path for your application
+    # Proxy requests to your API
+    location /api/ {  # Use /api/ to match all API requests
+        rewrite ^/api/(.*)$ /$1 break;  # Remove /api/ from the request URI
         proxy_pass http://localhost:8000;  # Proxy requests to your app
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;  # Upgrade header for WebSocket
@@ -32,4 +28,23 @@ server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; # Forwarded for
         proxy_set_header X-Forwarded-Proto $scheme; # Forwarded protocol
     }
+
+    # Proxy requests to Socket.IO
+    location /socket.io/ {  # Use /socket.io/ to match all Socket.IO requests
+        proxy_pass http://localhost:8000;  # Proxy requests to your app directly
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;  # Upgrade header for WebSocket
+        proxy_set_header Connection "upgrade";    # Connection header for WebSocket
+        proxy_set_header Host $host;              # Forward the host
+        proxy_set_header X-Real-IP $remote_addr; # Forward the real IP
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; # Forwarded for
+        proxy_set_header X-Forwarded-Proto $scheme; # Forwarded protocol
+    }
+
+
+    # Serve index.html for unmatched requests
+    location / {
+        try_files $uri $uri/ /index.html;  # Serve index.html for all unmatched requests
+    }
+
 }
